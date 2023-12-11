@@ -1,15 +1,30 @@
 import { bookService } from "../services/bookService.js"
 const { useState, useEffect } = React
+const { useParams, useNavigate, Link } = ReactRouterDOM
 
 export function BookDetails({ bookId, onBack }) {
-
     const [book, setBook] = useState(null)
+    const params = useParams()
+    console.log(params);
+    const navigate = useNavigate()
 
     useEffect(() => {
-        bookService.get(bookId)
+        loadBook()
+    }, [params.bookId])
+
+    function loadBook() {
+        bookService.get(params.bookId)
             .then(book => setBook(book))
-    }, [])
-    console.log(book);
+            .catch(err => {
+                console.log('err:', err)
+                navigate('/')
+            })
+    }
+
+    function onBack() {
+        navigate('/books')
+        // navigate(-1)
+    }
 
     function getPageCount(){
         const pageCount = book.pageCount
